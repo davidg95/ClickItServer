@@ -20,7 +20,7 @@ public class CodeAlreadyExistsException extends Exception {
 
     @Override
     public String getMessage() {
-        return code + " not found";
+        return code + " already exists";
     }
 
     @Override
