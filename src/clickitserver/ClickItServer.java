@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * ClickIt server class which accepts connections from multiple clients.
  *
  * @author David
  */
@@ -24,7 +25,7 @@ public class ClickItServer {
 
     private ServerSocket s;
     private Semaphore sem;
-    private CameraList data;
+    private CameraList cameras;
 
     /**
      * @param args the command line arguments
@@ -42,13 +43,13 @@ public class ClickItServer {
         try {
             s = new ServerSocket(500);
             sem = new Semaphore(1);
-            data = new CameraList();
+            cameras = new CameraList();
 
             ThreadPoolExecutor pool = new ThreadPoolExecutor(MAX_CONNECTIONS, MAX_QUEUE, 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(MAX_QUEUE)); //Create the thread pool
             pool.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
             for (;;) {
-                pool.submit(new InputThread(s, sem, data)); //Start a new thread
+                pool.submit(new InputThread(s, sem, cameras)); //Start a new thread
             }
         } catch (IOException e) {
             System.out.println(e);

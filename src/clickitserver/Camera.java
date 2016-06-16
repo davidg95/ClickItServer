@@ -65,7 +65,7 @@ public class Camera {
         this.full = !sensor.equals("CROP");
         this.stock = in.nextInt();
         this.price = in.nextDouble();
-
+        generateProductCode();
     }
 
     //Getter Methods

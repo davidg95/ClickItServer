@@ -40,9 +40,9 @@ public class InputThread extends Thread {
             PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);
 
             while (!conn_term) {
-                String input = in.readLine();
+                String input = in.readLine(); //Get input
 
-                String inp[] = input.split(" ");
+                String inp[] = input.split(" "); //Split up into arguments
 
                 switch (inp[0]) {
                     case "NEW": //New camera getting added
@@ -52,7 +52,7 @@ public class InputThread extends Thread {
                             sensor = true;
                         }
                         try {
-                            cameras.addCamera(createCamera(inp[1], inp[2], Double.parseDouble(inp[3]), sensor, Integer.parseInt(inp[5]), Double.parseDouble(inp[6])));
+                            cameras.addCamera(new Camera(inp[1], inp[2], Double.parseDouble(inp[3]), sensor, Integer.parseInt(inp[5]), Double.parseDouble(inp[6])));
                             out.println("SUCC");
                         } catch (CodeAlreadyExistsException e) {
                             out.println("FAIL CODE");
@@ -73,6 +73,21 @@ public class InputThread extends Thread {
                             System.out.println(e.getMessage());
                         }
                         sem.release();
+                        break;
+                    case "DEL": //Camera getting deleted
+                        sem.acquire();
+                        try {
+                            cameras.removeCamera(inp[1]);
+                            out.println("SUCC");
+                            System.out.println("Camera " + inp[1] + " deleted");
+                        } catch (CameraNotFoundException e) {
+                            out.println("FAIL NFOUND");
+                        } catch (Exception e) {
+                            System.out.println(e);
+                            out.println("FAIL");
+                        } finally {
+                            sem.release();
+                        }
                         break;
                     case "GET": //Searching for a camera by product code
                         sem.acquire();
@@ -123,11 +138,14 @@ public class InputThread extends Thread {
                             cameras.increaceStock(inp[1], Integer.parseInt(inp[2]));
                             out.println("SUCC");
                         } catch (CameraNotFoundException ex) {
-                            out.println("FAIL");
+                            out.println("FAIL NFOUND");
+                        } finally {
+                            sem.release();
                         }
                         break;
                     case "CONNTERM": //Terminate the connection
                         conn_term = true;
+                        break;
                     default: //If input is not recognised
                         System.out.println(inp[0] + " was not recognised");
                         out.println("NOTREC");
@@ -138,20 +156,5 @@ public class InputThread extends Thread {
             System.out.println(incoming.getInetAddress().getHostAddress() + " has disconnected");
         } catch (IOException | InterruptedException ex) {
         }
-    }
-
-    /**
-     * Method to create a new camera object from the given parameters.
-     *
-     * @param make the make of the camera.
-     * @param model the model of the camera.
-     * @param megapixles the number of megapixles the camera has.
-     * @param sensor the sensor size of the camera.
-     * @param stock the stock level of the camera.
-     * @param price the price of the camera.
-     * @return a new camera object.
-     */
-    public Camera createCamera(String make, String model, double megapixles, boolean sensor, int stock, double price) {
-        return new Camera(make, model, megapixles, sensor, stock, price);
     }
 }

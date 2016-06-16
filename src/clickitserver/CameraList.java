@@ -76,7 +76,7 @@ public class CameraList {
      * found.
      */
     public void removeCamera(Camera camera) throws CameraNotFoundException {
-        for (int i = 0; i <= (cameras.size() - 1); i++) {
+        for (int i = 0; i < cameras.size(); i++) {
             if (cameras.get(i).equals(camera)) {
                 cameras.remove(i);
                 System.out.println("Camera removed from list");
@@ -103,7 +103,7 @@ public class CameraList {
      * found.
      */
     public void removeCamera(String code) throws CameraNotFoundException {
-        for (int i = 0; i <= (cameras.size() - 1); i++) {
+        for (int i = 0; i < cameras.size(); i++) {
             if (cameras.get(i).getCode().equals(code)) {
                 cameras.remove(i);
                 System.out.println("Camera removed from list");
@@ -190,6 +190,7 @@ public class CameraList {
         for (Camera c : cameras) {
             if (c.getCode().equals(code)) {
                 c.purchase();
+                return;
             }
         }
         throw new CameraNotFoundException(code);
@@ -203,9 +204,12 @@ public class CameraList {
      * @throws clickitserver.CameraNotFoundException if camera is not found.
      */
     public void increaceStock(String code, int stock) throws CameraNotFoundException {
-        cameras.stream().filter((c) -> (c.getCode().equals(code))).forEach((c) -> {
-            c.increaceStock(stock);
-        });
+        for (Camera c : cameras) {
+            if (c.getCode().equals(code)) {
+                c.increaceStock(stock);
+                return;
+            }
+        }
 
         throw new CameraNotFoundException(code);
     }
