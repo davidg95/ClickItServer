@@ -25,6 +25,6 @@ public class CodeAlreadyExistsException extends Exception {
 
     @Override
     public String toString() {
-        return "Exception: " + code + " not found";
+        return "Exception: " + code + " already exists";
     }
 }
