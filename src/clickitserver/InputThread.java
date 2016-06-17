@@ -53,6 +53,7 @@ public class InputThread extends Thread {
                         }
                         try {
                             cameras.addCamera(new Camera(inp[1], inp[2], Double.parseDouble(inp[3]), sensor, Integer.parseInt(inp[5]), Double.parseDouble(inp[6])));
+                            cameras.saveToFile();
                             out.println("SUCC");
                         } catch (CodeAlreadyExistsException e) {
                             out.println("FAIL CODE");
@@ -63,6 +64,7 @@ public class InputThread extends Thread {
                         sem.acquire();
                         try {
                             cameras.purchaseCamera(inp[1]);
+                            cameras.saveToFile();
                             out.println("SUCC");
                             System.out.println("Purchase Successful");
                         } catch (OutOfStockException e) {
@@ -78,6 +80,7 @@ public class InputThread extends Thread {
                         sem.acquire();
                         try {
                             cameras.removeCamera(inp[1]);
+                            cameras.saveToFile();
                             out.println("SUCC");
                             System.out.println("Camera " + inp[1] + " deleted");
                         } catch (CameraNotFoundException e) {
@@ -136,6 +139,7 @@ public class InputThread extends Thread {
                         sem.acquire();
                         try {
                             cameras.increaceStock(inp[1], Integer.parseInt(inp[2]));
+                            cameras.saveToFile();
                             out.println("SUCC");
                         } catch (CameraNotFoundException ex) {
                             out.println("FAIL NFOUND");
