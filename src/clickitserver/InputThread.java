@@ -42,7 +42,7 @@ public class InputThread extends Thread {
             while (!conn_term) {
                 String input = in.readLine(); //Get input
 
-                String inp[] = input.split(" "); //Split up into arguments
+                String inp[] = input.split(","); //Split up into arguments
 
                 switch (inp[0]) {
                     case "NEW": //New camera getting added
