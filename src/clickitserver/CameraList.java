@@ -64,6 +64,7 @@ public class CameraList {
                 throw new CodeAlreadyExistsException(c.getCode());
             }
         }
+        c.generateProductCode();
         cameras.add(c);
         System.out.println(c);
     }
@@ -221,7 +222,7 @@ public class CameraList {
         try (PrintWriter writer = new PrintWriter("cameras.txt", "UTF-8")) {
             System.out.println("Starting to write to file");
             for (int i = 0; i <= (cameras.size() - 1); i++) {
-                writer.println(cameras.get(i).writeToFile());
+                writer.println(cameras.get(i).toCSV());
                 System.out.println("Camera written to file");
             }
             System.out.println("Writing to file complete");

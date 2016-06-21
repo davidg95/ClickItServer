@@ -97,7 +97,7 @@ public class InputThread extends Thread {
                         try {
                             Camera c = cameras.getCamera(inp[1]);
                             sem.release();
-                            String str = c.getMake() + "," + c.getModel() + "," + c.getMegapixles() + "," + c.getSensor() + "," + c.getStock() + "," + c.getPrice();
+                            String str = c.toCSV();
                             out.println(str);
                         } catch (CameraNotFoundException e) {
                             sem.release();
@@ -110,7 +110,7 @@ public class InputThread extends Thread {
                         try {
                             Camera c = cameras.getCamera(Integer.parseInt(inp[1]));
                             sem.release();
-                            String str = c.getMake() + "," + c.getModel() + "," + c.getMegapixles() + "," + c.getSensor() + "," + c.getStock() + "," + c.getPrice();
+                            String str = c.toCSV();
                             out.println(str);
                         } catch (ArrayIndexOutOfBoundsException e) {
                             sem.release();
