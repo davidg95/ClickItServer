@@ -21,11 +21,11 @@ public class InputThread extends Thread {
 
     private final ServerSocket s;
     private final Semaphore sem;
-    private final CameraList cameras;
+    private final ProductList cameras;
 
     private boolean conn_term = false;
 
-    public InputThread(ServerSocket s, Semaphore sem, CameraList data) {
+    public InputThread(ServerSocket s, Semaphore sem, ProductList data) {
         this.s = s;
         this.sem = sem;
         this.cameras = data;
@@ -45,7 +45,7 @@ public class InputThread extends Thread {
                 String inp[] = input.split(","); //Split up into arguments
 
                 switch (inp[0]) {
-                    case "NEW": //New camera getting added
+                    case "NEWCAM": //New camera getting added
                         sem.acquire();
                         boolean sensor = false;
                         if (inp[4].equals("FULL")) {
@@ -60,30 +60,41 @@ public class InputThread extends Thread {
                         }
                         sem.release();
                         break;
-                    case "PUR": //Camera getting purchased
+                    case "NEWLENS": //New lens getting added
                         sem.acquire();
                         try {
-                            cameras.purchaseCamera(inp[1]);
+                            cameras.addLens(new Lens(inp[1], Integer.parseInt(inp[2]), Integer.parseInt(inp[3]), Integer.parseInt(inp[4]), Integer.parseInt(inp[5]), inp[6].equals("FULL"), inp[7].equals("YES"), inp[8].equals("YES"), inp[9].equals("YES"), Double.parseDouble(inp[10]), Integer.parseInt(inp[11])));
+                            cameras.saveToFile();
+                            out.println("SUCC");
+                        } catch (CodeAlreadyExistsException e) {
+                            out.println("FAIL CODE");
+                        }
+                        sem.release();
+                        break;
+                    case "PUR": //Camera getting purchased by product code
+                        sem.acquire();
+                        try {
+                            cameras.purchaseProduct(inp[1]);
                             System.out.println(inp[1] + " purchase successful");
                             cameras.saveToFile();
                             out.println("SUCC");
                         } catch (OutOfStockException e) {
                             out.println("FAIL STOCK");
                             System.out.println(e.getMessage());
-                        } catch (CameraNotFoundException e) {
+                        } catch (ProductNotFoundException e) {
                             out.println("FAIL NFOUND");
                             System.out.println(e.getMessage());
                         }
                         sem.release();
                         break;
-                    case "DEL": //Camera getting deleted
+                    case "DEL": //Camera getting deleted by product code
                         sem.acquire();
                         try {
-                            cameras.removeCamera(inp[1]);
+                            cameras.removeProduct(inp[1]);
                             cameras.saveToFile();
                             out.println("SUCC");
                             System.out.println("Camera " + inp[1] + " deleted");
-                        } catch (CameraNotFoundException e) {
+                        } catch (ProductNotFoundException e) {
                             out.println("FAIL NFOUND");
                         } catch (Exception e) {
                             System.out.println(e);
@@ -99,13 +110,13 @@ public class InputThread extends Thread {
                             sem.release();
                             String str = c.toCSV();
                             out.println(str);
-                        } catch (CameraNotFoundException e) {
+                        } catch (ProductNotFoundException e) {
                             sem.release();
                             out.println("FAIL");
                             System.out.println(e.getMessage());
                         }
                         break;
-                    case "GETINDEX": //Get a camera by index
+                    case "GETCAMINDEX": //Get a camera by index
                         sem.acquire();
                         try {
                             Camera c = cameras.getCamera(Integer.parseInt(inp[1]));
@@ -118,18 +129,35 @@ public class InputThread extends Thread {
                             System.out.println("Index is out of bounds");
                         }
                         break;
-                    case "GETSIZE": //Get the total number of different cameras
+                    case "GETLENSINDEX": //Get a lens by index
                         sem.acquire();
-                        out.println(Integer.toString(cameras.size()));
+                        try {
+                            Lens l = cameras.getLens(Integer.parseInt(inp[1]));
+                            sem.release();
+                            String str = l.toCSV();
+                            out.println(str);
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            sem.release();
+                            out.println("FAIL");
+                            System.out.println("Index is out of bounds");
+                        }
+                        break;
+                    case "GETCAMSIZE": //Get the total number of different cameras
+                        sem.acquire();
+                        out.println(Integer.toString(cameras.camerasSize()));
+                        sem.release();
+                        break;
+                    case "GETLENSSIZE": //Get the total number of different lenses
+                        sem.acquire();
+                        out.println(Integer.toString(cameras.lensesSize()));
                         sem.release();
                         break;
                     case "GETSTOCK": //Get the stock level of a camera
                         sem.acquire();
                         try {
-                            Camera c = cameras.getCamera(inp[1]);
+                            out.println(cameras.getStock(inp[1]));
                             sem.release();
-                            out.println(c.getStock());
-                        } catch (CameraNotFoundException e) {
+                        } catch (ProductNotFoundException e) {
                             sem.release();
                             out.println("FAIL");
                             System.out.println(e.getMessage());
@@ -142,7 +170,7 @@ public class InputThread extends Thread {
                             System.out.println("Stock level of " + inp[1] + " hs been increaced by " + inp[2]);
                             cameras.saveToFile();
                             out.println("SUCC");
-                        } catch (CameraNotFoundException ex) {
+                        } catch (ProductNotFoundException ex) {
                             out.println("FAIL NFOUND");
                         } finally {
                             sem.release();

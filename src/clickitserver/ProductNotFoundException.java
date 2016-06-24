@@ -10,11 +10,11 @@ package clickitserver;
  *
  * @author David
  */
-public class CameraNotFoundException extends Exception {
+public class ProductNotFoundException extends Exception {
     
     private final String code;
     
-    public CameraNotFoundException(String code){
+    public ProductNotFoundException(String code){
         this.code = code;
     }
     

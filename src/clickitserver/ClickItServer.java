@@ -25,7 +25,7 @@ public class ClickItServer {
 
     private ServerSocket s;
     private Semaphore sem;
-    private CameraList cameras;
+    private ProductList cameras;
 
     /**
      * @param args the command line arguments
@@ -43,7 +43,7 @@ public class ClickItServer {
         try {
             s = new ServerSocket(PORT);
             sem = new Semaphore(1);
-            cameras = new CameraList();
+            cameras = new ProductList();
             
             System.out.println("Starting server on port number " + PORT);
             System.out.println("Up to " + MAX_CONNECTIONS + " can be accepted with " + MAX_QUEUE + " queued");
