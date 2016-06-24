@@ -64,9 +64,9 @@ public class InputThread extends Thread {
                         sem.acquire();
                         try {
                             cameras.purchaseCamera(inp[1]);
+                            System.out.println(inp[1] + " purchase successful");
                             cameras.saveToFile();
                             out.println("SUCC");
-                            System.out.println("Purchase Successful");
                         } catch (OutOfStockException e) {
                             out.println("FAIL STOCK");
                             System.out.println(e.getMessage());
@@ -139,6 +139,7 @@ public class InputThread extends Thread {
                         sem.acquire();
                         try {
                             cameras.increaceStock(inp[1], Integer.parseInt(inp[2]));
+                            System.out.println("Stock level of " + inp[1] + " hs been increaced by " + inp[2]);
                             cameras.saveToFile();
                             out.println("SUCC");
                         } catch (CameraNotFoundException ex) {

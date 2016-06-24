@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClickItServer {
 
-    public final int PORT = 5000;
+    public final int PORT = 500;
     public final int MAX_CONNECTIONS = 10;
     public final int MAX_QUEUE = 10;
 
@@ -41,9 +41,12 @@ public class ClickItServer {
     public void start() {
 
         try {
-            s = new ServerSocket(500);
+            s = new ServerSocket(PORT);
             sem = new Semaphore(1);
             cameras = new CameraList();
+            
+            System.out.println("Starting server on port number " + PORT);
+            System.out.println("Up to " + MAX_CONNECTIONS + " can be accepted with " + MAX_QUEUE + " queued");
 
             ThreadPoolExecutor pool = new ThreadPoolExecutor(MAX_CONNECTIONS, MAX_QUEUE, 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(MAX_QUEUE)); //Create the thread pool
             pool.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());

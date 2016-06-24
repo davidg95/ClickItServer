@@ -221,7 +221,6 @@ public class Camera {
      */
     public void increaceStock(int stock) {
         this.stock += stock;
-        System.out.println("Stock of camera increace by " + stock);
     }
 
     /**

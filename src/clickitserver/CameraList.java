@@ -80,7 +80,6 @@ public class CameraList {
         for (int i = 0; i < cameras.size(); i++) {
             if (cameras.get(i).equals(camera)) {
                 cameras.remove(i);
-                System.out.println("Camera removed from list");
                 return;
             }
         }
@@ -107,7 +106,6 @@ public class CameraList {
         for (int i = 0; i < cameras.size(); i++) {
             if (cameras.get(i).getCode().equals(code)) {
                 cameras.remove(i);
-                System.out.println("Camera removed from list");
                 return;
             }
         }
@@ -211,7 +209,6 @@ public class CameraList {
                 return;
             }
         }
-
         throw new CameraNotFoundException(code);
     }
 
@@ -223,7 +220,6 @@ public class CameraList {
             System.out.println("Starting to write to file");
             for (int i = 0; i <= (cameras.size() - 1); i++) {
                 writer.println(cameras.get(i).toCSV());
-                System.out.println("Camera written to file");
             }
             System.out.println("Writing to file complete");
         } catch (IOException ex) {
