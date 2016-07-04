@@ -63,7 +63,7 @@ public class InputThread extends Thread {
                     case "NEWLENS": //New lens getting added
                         sem.acquire();
                         try {
-                            cameras.addLens(new Lens(inp[1], Integer.parseInt(inp[2]), Integer.parseInt(inp[3]), Integer.parseInt(inp[4]), Integer.parseInt(inp[5]), inp[6].equals("FULL"), inp[7].equals("YES"), inp[8].equals("YES"), inp[9].equals("YES"), Double.parseDouble(inp[10]), Integer.parseInt(inp[11])));
+                            cameras.addLens(new Lens(inp[1], Integer.parseInt(inp[2]), Integer.parseInt(inp[3]), Double.parseDouble(inp[4]), Double.parseDouble(inp[5]), inp[6].equals("FULL"), inp[7].equals("YES"), inp[8].equals("YES"), inp[9].equals("YES"), Double.parseDouble(inp[10]), Integer.parseInt(inp[11])));
                             cameras.saveToFile();
                             out.println("SUCC");
                         } catch (CodeAlreadyExistsException e) {
