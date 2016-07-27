@@ -5,17 +5,58 @@
  */
 package clickitserver;
 
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author David
  */
 public class MainGUI extends javax.swing.JFrame {
 
+    private List<String> clients;
     /**
      * Creates new form MainGUI
      */
     public MainGUI() {
         initComponents();
+        
+        clients = new ArrayList<>();
+        
+        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        jScrollPane3.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        txtLogs.setLineWrap(true);
+        
+        updateClients();
+    }
+    
+    public void toLog(Object s){
+        txtLogs.append("[" + new Time(new Date().getTime()).toString() + "] " + s + "\n");
+    }
+    
+    public final void updateClients(){
+        DefaultListModel lm = new DefaultListModel();
+        for (String s : clients) {
+            lm.addElement(s);
+        }
+        if (lm.isEmpty()) {
+            lm.addElement("There are currently no clients conencted");
+        }
+        lstClients.setModel(lm);
+        lblClients.setText(clients.size() + "/" + ClickItServer.MAX_CONNECTIONS + " clients connected");
+    }
+    
+    public void addClient(String IP){
+        clients.add(IP);
+        updateClients();
+    }
+    
+    public void removeClient(String IP){
+        clients.remove(IP);
+        updateClients();
     }
 
     /**
@@ -27,17 +68,51 @@ public class MainGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtLogs = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        lstClients = new javax.swing.JList();
+        lblClients = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("ClickIt Server");
+
+        txtLogs.setColumns(20);
+        txtLogs.setRows(5);
+        jScrollPane1.setViewportView(txtLogs);
+
+        lstClients.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(lstClients);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 837, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 610, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblClients)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 424, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblClients)
+                .addContainerGap(91, Short.MAX_VALUE))
         );
 
         pack();
@@ -79,5 +154,10 @@ public class MainGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblClients;
+    private javax.swing.JList lstClients;
+    private javax.swing.JTextArea txtLogs;
     // End of variables declaration//GEN-END:variables
 }

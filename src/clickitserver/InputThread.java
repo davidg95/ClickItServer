@@ -22,19 +22,23 @@ public class InputThread extends Thread {
     private final ServerSocket s;
     private final Semaphore sem;
     private final ProductList cameras;
+    private final MainGUI g;
 
     private boolean conn_term = false;
 
-    public InputThread(ServerSocket s, Semaphore sem, ProductList data) {
+    public InputThread(ServerSocket s, Semaphore sem, ProductList data, MainGUI g) {
         this.s = s;
         this.sem = sem;
         this.cameras = data;
+        this.g = g;
     }
 
     @Override
     public void run() {
         try {
             Socket incoming = s.accept();
+            g.toLog(incoming.getInetAddress().getHostAddress() + " connected");
+            g.addClient(incoming.getInetAddress().getHostAddress());
             System.out.println(incoming.getInetAddress().getHostAddress() + " connected");
             BufferedReader in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
             PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);
@@ -55,6 +59,7 @@ public class InputThread extends Thread {
                             cameras.addCamera(new Camera(inp[1], inp[2], Double.parseDouble(inp[3]), sensor, Integer.parseInt(inp[5]), Double.parseDouble(inp[6])));
                             cameras.saveToFile();
                             out.println("SUCC");
+                            g.toLog("Camera added");
                         } catch (CodeAlreadyExistsException e) {
                             out.println("FAIL CODE");
                         }
@@ -76,14 +81,17 @@ public class InputThread extends Thread {
                         try {
                             cameras.purchaseProduct(inp[1]);
                             System.out.println(inp[1] + " purchase successful");
+                            g.toLog(inp[1] + " purchase successful");
                             cameras.saveToFile();
                             out.println("SUCC");
                         } catch (OutOfStockException e) {
                             out.println("FAIL STOCK");
                             System.out.println(e.getMessage());
+                            g.toLog(e.getMessage());
                         } catch (ProductNotFoundException e) {
                             out.println("FAIL NFOUND");
                             System.out.println(e.getMessage());
+                            g.toLog(e.getMessage());
                         }
                         sem.release();
                         break;
@@ -94,10 +102,12 @@ public class InputThread extends Thread {
                             cameras.saveToFile();
                             out.println("SUCC");
                             System.out.println("Camera " + inp[1] + " deleted");
+                            g.toLog("Camera " + inp[1] + " deleted");
                         } catch (ProductNotFoundException e) {
                             out.println("FAIL NFOUND");
                         } catch (Exception e) {
                             System.out.println(e);
+                            g.toLog(e);
                             out.println("FAIL");
                         } finally {
                             sem.release();
@@ -114,6 +124,7 @@ public class InputThread extends Thread {
                             sem.release();
                             out.println("FAIL");
                             System.out.println(e.getMessage());
+                            g.toLog(e.getMessage());
                         }
                         break;
                     case "GETCAMINDEX": //Get a camera by index
@@ -127,6 +138,7 @@ public class InputThread extends Thread {
                             sem.release();
                             out.println("FAIL");
                             System.out.println("Index is out of bounds");
+                            g.toLog("Index is out of bounds");
                         }
                         break;
                     case "GETLENSINDEX": //Get a lens by index
@@ -140,6 +152,7 @@ public class InputThread extends Thread {
                             sem.release();
                             out.println("FAIL");
                             System.out.println("Index is out of bounds");
+                            g.toLog("Index is out of bounds");
                         }
                         break;
                     case "GETCAMSIZE": //Get the total number of different cameras
@@ -161,6 +174,7 @@ public class InputThread extends Thread {
                             sem.release();
                             out.println("FAIL");
                             System.out.println(e.getMessage());
+                            g.toLog(e.getMessage());
                         }
                         break;
                     case "STOCKINC": //Increace the stock
@@ -168,6 +182,7 @@ public class InputThread extends Thread {
                         try {
                             cameras.increaceStock(inp[1], Integer.parseInt(inp[2]));
                             System.out.println("Stock level of " + inp[1] + " hs been increaced by " + inp[2]);
+                            g.toLog("Stock level of " + inp[1] + " hs been increaced by " + inp[2]);
                             cameras.saveToFile();
                             out.println("SUCC");
                         } catch (ProductNotFoundException ex) {
@@ -181,12 +196,15 @@ public class InputThread extends Thread {
                         break;
                     default: //If input is not recognised
                         System.out.println(inp[0] + " was not recognised");
+                        g.toLog(inp[0] + " was not recognised");
                         out.println("NOTREC");
                         break;
                 }
             }
+            g.removeClient(incoming.getInetAddress().getHostAddress());
             incoming.close();
             System.out.println(incoming.getInetAddress().getHostAddress() + " has disconnected");
+            g.toLog(incoming.getInetAddress().getHostAddress() + " has disconnected");
         } catch (IOException | InterruptedException ex) {
         }
     }

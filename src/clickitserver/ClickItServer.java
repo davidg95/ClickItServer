@@ -19,13 +19,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClickItServer {
 
-    public final int PORT = 500;
-    public final int MAX_CONNECTIONS = 10;
-    public final int MAX_QUEUE = 10;
+    public static final int PORT = 500;
+    public static final int MAX_CONNECTIONS = 10;
+    public static final int MAX_QUEUE = 10;
 
     private ServerSocket s;
     private Semaphore sem;
     private ProductList cameras;
+    private MainGUI g;
 
     /**
      * @param args the command line arguments
@@ -44,15 +45,20 @@ public class ClickItServer {
             s = new ServerSocket(PORT);
             sem = new Semaphore(1);
             cameras = new ProductList();
+            g = new MainGUI();
+            
+            g.setVisible(true);
             
             System.out.println("Starting server on port number " + PORT);
             System.out.println("Up to " + MAX_CONNECTIONS + " can be accepted with " + MAX_QUEUE + " queued");
+            g.toLog("Starting server on port number " + PORT);
+            g.toLog("Up to " + MAX_CONNECTIONS + " can be accepted with " + MAX_QUEUE + " queued");
 
             ThreadPoolExecutor pool = new ThreadPoolExecutor(MAX_CONNECTIONS, MAX_QUEUE, 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(MAX_QUEUE)); //Create the thread pool
             pool.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 
             for (;;) {
-                pool.submit(new InputThread(s, sem, cameras)); //Start a new thread
+                pool.submit(new InputThread(s, sem, cameras, g)); //Start a new thread
             }
         } catch (IOException e) {
             System.out.println(e);
