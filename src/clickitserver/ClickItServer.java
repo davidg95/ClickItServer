@@ -7,10 +7,7 @@ package clickitserver;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * ClickIt server class which accepts connections from multiple clients.
@@ -23,10 +20,13 @@ public class ClickItServer {
     public static final int MAX_CONNECTIONS = 10;
     public static final int MAX_QUEUE = 10;
 
+    public Semaphore dataSem;
+    public Semaphore clientsSem;
+
     private ServerSocket s;
-    private Semaphore sem;
-    private ProductList cameras;
-    private MainGUI g;
+    private final Data data;
+    private final ServerGUI g;
+    private ConnectionAcceptThread connThread;
 
     /**
      * @param args the command line arguments
@@ -36,33 +36,22 @@ public class ClickItServer {
     }
 
     public ClickItServer() {
+        data = new Data();
+        g = new ServerGUI(data);
+        dataSem = new Semaphore(1);
+        clientsSem = new Semaphore(1);
+        try {
+            s = new ServerSocket(PORT);
+            connThread = new ConnectionAcceptThread(s, dataSem, clientsSem, data, g);
+        } catch (IOException ex) {
 
+        }
     }
 
     public void start() {
-
-        try {
-            s = new ServerSocket(PORT);
-            sem = new Semaphore(1);
-            cameras = new ProductList();
-            g = new MainGUI();
-            
-            g.setVisible(true);
-            
-            System.out.println("Starting server on port number " + PORT);
-            System.out.println("Up to " + MAX_CONNECTIONS + " can be accepted with " + MAX_QUEUE + " queued");
-            g.toLog("Starting server on port number " + PORT);
-            g.toLog("Up to " + MAX_CONNECTIONS + " can be accepted with " + MAX_QUEUE + " queued");
-
-            ThreadPoolExecutor pool = new ThreadPoolExecutor(MAX_CONNECTIONS, MAX_QUEUE, 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(MAX_QUEUE)); //Create the thread pool
-            pool.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-
-            for (;;) {
-                pool.submit(new InputThread(s, sem, cameras, g)); //Start a new thread
-            }
-        } catch (IOException e) {
-            System.out.println(e);
-        }
+        connThread.start();
+        g.setVisible(true);
+        g.login();
     }
 
 }

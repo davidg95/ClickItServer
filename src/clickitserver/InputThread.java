@@ -5,12 +5,15 @@
  */
 package clickitserver;
 
+import io.github.davidg95.productapi.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -19,29 +22,43 @@ import java.util.concurrent.Semaphore;
  */
 public class InputThread extends Thread {
 
-    private final ServerSocket s;
-    private final Semaphore sem;
-    private final ProductList cameras;
-    private final MainGUI g;
+    private final Socket s;
+    private final Data data;
+
+    private BufferedReader in;
+    private PrintWriter out;
+    private ObjectInputStream obIn;
+    private ObjectOutputStream obOut;
+
+    private final Semaphore dataSem;
+    private final Semaphore clientSem;
 
     private boolean conn_term = false;
 
-    public InputThread(ServerSocket s, Semaphore sem, ProductList data, MainGUI g) {
+    /**
+     * Constructor for input thread class.
+     *
+     * @param s the socket the connection is on.
+     * @param dataSem the semaphore for the data.
+     * @param clientsSem the semaphore for the client list.
+     * @param data the data for the server.
+     */
+    public InputThread(Socket s, Semaphore dataSem, Semaphore clientsSem, Data data) {
         this.s = s;
-        this.sem = sem;
-        this.cameras = data;
-        this.g = g;
+        this.dataSem = dataSem;
+        this.clientSem = clientsSem;
+        this.data = data;
     }
 
     @Override
     public void run() {
         try {
-            Socket incoming = s.accept();
-            g.toLog(incoming.getInetAddress().getHostAddress() + " connected");
-            g.addClient(incoming.getInetAddress().getHostAddress());
-            System.out.println(incoming.getInetAddress().getHostAddress() + " connected");
-            BufferedReader in = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
-            PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);
+            System.out.println(s.getInetAddress().getHostAddress() + " connected");
+            in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            out = new PrintWriter(s.getOutputStream(), true);
+            obIn = new ObjectInputStream(s.getInputStream());
+            obOut = new ObjectOutputStream(s.getOutputStream());
+            obOut.flush();
 
             while (!conn_term) {
                 String input = in.readLine(); //Get input
@@ -49,163 +66,125 @@ public class InputThread extends Thread {
                 String inp[] = input.split(","); //Split up into arguments
 
                 switch (inp[0]) {
-                    case "NEWCAM": //New camera getting added
-                        sem.acquire();
-                        boolean sensor = false;
-                        if (inp[4].equals("FULL")) {
-                            sensor = true;
-                        }
+                    case "NEW": //Add a new product
+                        Object o;
                         try {
-                            cameras.addCamera(new Camera(inp[1], inp[2], Double.parseDouble(inp[3]), sensor, Integer.parseInt(inp[5]), Double.parseDouble(inp[6])));
-                            cameras.saveToFile();
-                            out.println("SUCC");
-                            g.toLog("Camera added");
-                        } catch (CodeAlreadyExistsException e) {
-                            out.println("FAIL CODE");
+                            o = obIn.readObject();
+
+                            Product p = (Product) o;
+                            dataSem.acquire();
+                            data.addProduct(p);
+                        } catch (ClassNotFoundException | InterruptedException ex) {
                         }
-                        sem.release();
+                        dataSem.release();
                         break;
-                    case "NEWLENS": //New lens getting added
-                        sem.acquire();
+                    case "PUR": //Purchase a product
                         try {
-                            cameras.addLens(new Lens(inp[1], Integer.parseInt(inp[2]), Integer.parseInt(inp[3]), Double.parseDouble(inp[4]), Double.parseDouble(inp[5]), inp[6].equals("FULL"), inp[7].equals("YES"), inp[8].equals("YES"), inp[9].equals("YES"), Double.parseDouble(inp[10]), Integer.parseInt(inp[11])));
-                            cameras.saveToFile();
+                            String code = inp[1];
+                            dataSem.acquire();
+                            data.purchaseProduct(code);
                             out.println("SUCC");
-                        } catch (CodeAlreadyExistsException e) {
-                            out.println("FAIL CODE");
-                        }
-                        sem.release();
-                        break;
-                    case "PUR": //Camera getting purchased by product code
-                        sem.acquire();
-                        try {
-                            cameras.purchaseProduct(inp[1]);
-                            System.out.println(inp[1] + " purchase successful");
-                            g.toLog(inp[1] + " purchase successful");
-                            cameras.saveToFile();
-                            out.println("SUCC");
-                        } catch (OutOfStockException e) {
+                        } catch (InterruptedException ex) {
+
+                        } catch (OutOfStockException ex) {
                             out.println("FAIL STOCK");
-                            System.out.println(e.getMessage());
-                            g.toLog(e.getMessage());
-                        } catch (ProductNotFoundException e) {
-                            out.println("FAIL NFOUND");
-                            System.out.println(e.getMessage());
-                            g.toLog(e.getMessage());
-                        }
-                        sem.release();
-                        break;
-                    case "DEL": //Camera getting deleted by product code
-                        sem.acquire();
-                        try {
-                            cameras.removeProduct(inp[1]);
-                            cameras.saveToFile();
-                            out.println("SUCC");
-                            System.out.println("Camera " + inp[1] + " deleted");
-                            g.toLog("Camera " + inp[1] + " deleted");
-                        } catch (ProductNotFoundException e) {
-                            out.println("FAIL NFOUND");
-                        } catch (Exception e) {
-                            System.out.println(e);
-                            g.toLog(e);
-                            out.println("FAIL");
-                        } finally {
-                            sem.release();
-                        }
-                        break;
-                    case "GET": //Searching for a camera by product code
-                        sem.acquire();
-                        try {
-                            Camera c = cameras.getCamera(inp[1]);
-                            sem.release();
-                            String str = c.toCSV();
-                            out.println(str);
-                        } catch (ProductNotFoundException e) {
-                            sem.release();
-                            out.println("FAIL");
-                            System.out.println(e.getMessage());
-                            g.toLog(e.getMessage());
-                        }
-                        break;
-                    case "GETCAMINDEX": //Get a camera by index
-                        sem.acquire();
-                        try {
-                            Camera c = cameras.getCamera(Integer.parseInt(inp[1]));
-                            sem.release();
-                            String str = c.toCSV();
-                            out.println(str);
-                        } catch (ArrayIndexOutOfBoundsException e) {
-                            sem.release();
-                            out.println("FAIL");
-                            System.out.println("Index is out of bounds");
-                            g.toLog("Index is out of bounds");
-                        }
-                        break;
-                    case "GETLENSINDEX": //Get a lens by index
-                        sem.acquire();
-                        try {
-                            Lens l = cameras.getLens(Integer.parseInt(inp[1]));
-                            sem.release();
-                            String str = l.toCSV();
-                            out.println(str);
-                        } catch (ArrayIndexOutOfBoundsException e) {
-                            sem.release();
-                            out.println("FAIL");
-                            System.out.println("Index is out of bounds");
-                            g.toLog("Index is out of bounds");
-                        }
-                        break;
-                    case "GETCAMSIZE": //Get the total number of different cameras
-                        sem.acquire();
-                        out.println(Integer.toString(cameras.camerasSize()));
-                        sem.release();
-                        break;
-                    case "GETLENSSIZE": //Get the total number of different lenses
-                        sem.acquire();
-                        out.println(Integer.toString(cameras.lensesSize()));
-                        sem.release();
-                        break;
-                    case "GETSTOCK": //Get the stock level of a camera
-                        sem.acquire();
-                        try {
-                            out.println(cameras.getStock(inp[1]));
-                            sem.release();
-                        } catch (ProductNotFoundException e) {
-                            sem.release();
-                            out.println("FAIL");
-                            System.out.println(e.getMessage());
-                            g.toLog(e.getMessage());
-                        }
-                        break;
-                    case "STOCKINC": //Increace the stock
-                        sem.acquire();
-                        try {
-                            cameras.increaceStock(inp[1], Integer.parseInt(inp[2]));
-                            System.out.println("Stock level of " + inp[1] + " hs been increaced by " + inp[2]);
-                            g.toLog("Stock level of " + inp[1] + " hs been increaced by " + inp[2]);
-                            cameras.saveToFile();
-                            out.println("SUCC");
                         } catch (ProductNotFoundException ex) {
                             out.println("FAIL NFOUND");
-                        } finally {
-                            sem.release();
                         }
+                        dataSem.release();
+                        break;
+                    case "GET": //Get a product
+                        try {
+                            String code = inp[1];
+                            dataSem.acquire();
+                            Product p = data.getProduct(code);
+                            obOut.writeObject(p);
+                        } catch (InterruptedException ex) {
+
+                        } catch (ProductNotFoundException ex) {
+                            obOut.writeObject(ex);
+                        }
+                        dataSem.release();
+                        break;
+                    case "GETSTOCK": //Get a products stock level
+                        try {
+                            String code = inp[1];
+                            dataSem.acquire();
+                            int stock = data.getStock(code);
+                            out.println(stock);
+                        } catch (InterruptedException ex) {
+
+                        } catch (ProductNotFoundException ex) {
+                            out.println("FAIL");
+                        }
+                        dataSem.release();
+                        break;
+                    case "STOCKINC": //Increase a products stock level
+                        try {
+                            String code = inp[1];
+                            int stock = Integer.parseInt(inp[2]);
+                            dataSem.acquire();
+                            data.increaseStock(code, stock);
+                            out.println("SUCC");
+                        } catch (InterruptedException ex) {
+
+                        } catch (ProductNotFoundException ex) {
+                            out.println("FAIL NFOUND");
+                        }
+                        dataSem.release();
+                        break;
+                    case "DEL": //Delete a product
+                        try {
+                            String code = inp[1];
+                            dataSem.acquire();
+                            data.deleteProduct(code);
+                            out.println("SUCC");
+                        } catch (InterruptedException ex) {
+
+                        } catch (ProductNotFoundException ex) {
+                            out.println("FAIL NFOUND");
+                        }
+                        dataSem.release();
+                        break;
+                    case "GETALL": //Get all the products
+                        try {
+                            dataSem.acquire();
+                            List<Product> products = data.getAllProducts();
+                            out.println(products.size());
+                            for (Product p : products) {
+                                obOut.writeObject(p);
+                            }
+                        } catch (InterruptedException ex) {
+
+                        }
+                        dataSem.release();
+                        break;
+                    case "SENDDATA": //Get sales data.
+                        try {
+                            double takings = Double.parseDouble(inp[1]);
+                            dataSem.acquire();
+                            data.addTakings(takings);
+                        } catch (InterruptedException ex) {
+
+                        }
+                        dataSem.release();
                         break;
                     case "CONNTERM": //Terminate the connection
                         conn_term = true;
                         break;
-                    default: //If input is not recognised
-                        System.out.println(inp[0] + " was not recognised");
-                        g.toLog(inp[0] + " was not recognised");
-                        out.println("NOTREC");
-                        break;
+                    default:
+
                 }
             }
-            g.removeClient(incoming.getInetAddress().getHostAddress());
-            incoming.close();
-            System.out.println(incoming.getInetAddress().getHostAddress() + " has disconnected");
-            g.toLog(incoming.getInetAddress().getHostAddress() + " has disconnected");
-        } catch (IOException | InterruptedException ex) {
+            try {
+                clientSem.acquire();
+                data.removeClient(s);
+            } catch (InterruptedException ex) {
+            }
+            clientSem.release();
+            s.close();
+            System.out.println(s.getInetAddress().getHostAddress() + " has disconnected");
+        } catch (IOException e) {
         }
     }
 }
