@@ -81,6 +81,10 @@
                       <EmptySpace min="-2" pref="132" max="-2" attributes="0"/>
                       <Component id="btnTakings" min="-2" max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lblLog" min="-2" pref="81" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace pref="278" max="32767" attributes="0"/>
           </Group>
@@ -93,7 +97,9 @@
               <Component id="btnTakings" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="160" max="-2" attributes="0"/>
               <Component id="lblClients" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="70" max="32767" attributes="0"/>
+              <EmptySpace pref="43" max="32767" attributes="0"/>
+              <Component id="lblLog" min="-2" pref="16" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -108,6 +114,8 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTakingsActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="lblLog">
     </Component>
   </SubComponents>
 </Form>

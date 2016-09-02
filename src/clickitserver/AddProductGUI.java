@@ -10,6 +10,7 @@ import io.github.davidg95.clickitapi.Lens;
 import io.github.davidg95.productapi.Product;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.border.TitledBorder;
 
 /**
  * The dialog to create a new product.
@@ -26,6 +27,9 @@ public class AddProductGUI extends javax.swing.JDialog {
      */
     public AddProductGUI() {
         initComponents();
+        panelMain.setBorder(new TitledBorder("Product Details"));
+        panelCamera.setBorder(new TitledBorder("Camera"));
+        panelLens.setBorder(new TitledBorder("Lens"));
         this.setLocationRelativeTo(null);
         this.setModal(true);
     }
@@ -53,88 +57,45 @@ public class AddProductGUI extends javax.swing.JDialog {
 
         btngrpSensor = new javax.swing.ButtonGroup();
         btngrpProduct = new javax.swing.ButtonGroup();
-        lblMake = new javax.swing.JLabel();
-        lblModel = new javax.swing.JLabel();
-        lblMegapixles = new javax.swing.JLabel();
-        lblSensor = new javax.swing.JLabel();
-        lblStock = new javax.swing.JLabel();
-        lblPrice = new javax.swing.JLabel();
-        txtMake = new javax.swing.JTextField();
-        txtModel = new javax.swing.JTextField();
-        txtMegapixles = new javax.swing.JTextField();
-        txtStock = new javax.swing.JTextField();
-        txtPrice = new javax.swing.JTextField();
-        radCrop = new javax.swing.JRadioButton();
-        radFull = new javax.swing.JRadioButton();
         cmdClear = new javax.swing.JButton();
         cmdAdd = new javax.swing.JButton();
         cmdClose = new javax.swing.JButton();
+        panelMain = new javax.swing.JPanel();
+        txtMake = new javax.swing.JTextField();
+        lblMake = new javax.swing.JLabel();
+        lblStock = new javax.swing.JLabel();
+        txtStock = new javax.swing.JTextField();
+        lblPrice = new javax.swing.JLabel();
+        txtPrice = new javax.swing.JTextField();
         radCamera = new javax.swing.JRadioButton();
         radLens = new javax.swing.JRadioButton();
+        panelCamera = new javax.swing.JPanel();
+        txtMegapixles = new javax.swing.JTextField();
+        lblMegapixles = new javax.swing.JLabel();
+        txtModel = new javax.swing.JTextField();
+        lblModel = new javax.swing.JLabel();
+        lblSensor = new javax.swing.JLabel();
+        radCrop = new javax.swing.JRadioButton();
+        radFull = new javax.swing.JRadioButton();
+        panelLens = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtFocMin = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         txtFocMax = new javax.swing.JTextField();
+        txtFMax = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtFMin = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        txtFMax = new javax.swing.JTextField();
         chkFull = new javax.swing.JCheckBox();
         chkVR = new javax.swing.JCheckBox();
         chkMacro = new javax.swing.JCheckBox();
         chkAF = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setTitle("Add New Camera");
+        setTitle("Add New Product");
+        setLocationByPlatform(true);
+        setMinimumSize(null);
         setResizable(false);
-
-        lblMake.setText("Make:");
-
-        lblModel.setText("Model:");
-
-        lblMegapixles.setText("Megapixles:");
-
-        lblSensor.setText("Sensor:");
-
-        lblStock.setText("Initial Stock:");
-
-        lblPrice.setText("Price:");
-
-        txtMake.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMakeActionPerformed(evt);
-            }
-        });
-
-        txtModel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtModelActionPerformed(evt);
-            }
-        });
-
-        txtMegapixles.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMegapixlesActionPerformed(evt);
-            }
-        });
-
-        txtStock.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtStockActionPerformed(evt);
-            }
-        });
-
-        txtPrice.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtPriceActionPerformed(evt);
-            }
-        });
-
-        btngrpSensor.add(radCrop);
-        radCrop.setText("Crop");
-
-        btngrpSensor.add(radFull);
-        radFull.setText("Full");
 
         cmdClear.setText("Clear");
         cmdClear.addActionListener(new java.awt.event.ActionListener() {
@@ -144,6 +105,7 @@ public class AddProductGUI extends javax.swing.JDialog {
         });
 
         cmdAdd.setText("Add");
+        cmdAdd.setEnabled(false);
         cmdAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmdAddActionPerformed(evt);
@@ -154,6 +116,33 @@ public class AddProductGUI extends javax.swing.JDialog {
         cmdClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmdCloseActionPerformed(evt);
+            }
+        });
+
+        panelMain.setMaximumSize(new java.awt.Dimension(332, 73));
+        panelMain.setMinimumSize(new java.awt.Dimension(332, 73));
+
+        txtMake.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMakeActionPerformed(evt);
+            }
+        });
+
+        lblMake.setText("Make:");
+
+        lblStock.setText("Initial Stock:");
+
+        txtStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtStockActionPerformed(evt);
+            }
+        });
+
+        lblPrice.setText("Price:");
+
+        txtPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPriceActionPerformed(evt);
             }
         });
 
@@ -173,154 +162,251 @@ public class AddProductGUI extends javax.swing.JDialog {
             }
         });
 
+        javax.swing.GroupLayout panelMainLayout = new javax.swing.GroupLayout(panelMain);
+        panelMain.setLayout(panelMainLayout);
+        panelMainLayout.setHorizontalGroup(
+            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelMainLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblStock)
+                    .addComponent(lblMake))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtMake)
+                    .addComponent(txtStock, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelMainLayout.createSequentialGroup()
+                        .addComponent(lblPrice)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelMainLayout.createSequentialGroup()
+                        .addComponent(radCamera)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(radLens)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panelMainLayout.setVerticalGroup(
+            panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelMainLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMake)
+                    .addComponent(txtMake, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPrice)
+                    .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblStock)
+                    .addComponent(txtStock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(radCamera)
+                    .addComponent(radLens))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelCamera.setEnabled(false);
+        panelCamera.setMaximumSize(new java.awt.Dimension(195, 89));
+        panelCamera.setMinimumSize(new java.awt.Dimension(195, 89));
+
+        txtMegapixles.setEnabled(false);
+        txtMegapixles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMegapixlesActionPerformed(evt);
+            }
+        });
+
+        lblMegapixles.setText("Megapixles:");
+
+        txtModel.setEnabled(false);
+        txtModel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtModelActionPerformed(evt);
+            }
+        });
+
+        lblModel.setText("Model:");
+
+        lblSensor.setText("Sensor:");
+
+        btngrpSensor.add(radCrop);
+        radCrop.setText("Crop");
+        radCrop.setEnabled(false);
+
+        btngrpSensor.add(radFull);
+        radFull.setText("Full");
+        radFull.setEnabled(false);
+
+        javax.swing.GroupLayout panelCameraLayout = new javax.swing.GroupLayout(panelCamera);
+        panelCamera.setLayout(panelCameraLayout);
+        panelCameraLayout.setHorizontalGroup(
+            panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCameraLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelCameraLayout.createSequentialGroup()
+                        .addComponent(lblMegapixles)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtMegapixles, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelCameraLayout.createSequentialGroup()
+                        .addGroup(panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblSensor)
+                            .addComponent(lblModel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(panelCameraLayout.createSequentialGroup()
+                                .addComponent(radCrop)
+                                .addGap(18, 18, 18)
+                                .addComponent(radFull))
+                            .addComponent(txtModel))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panelCameraLayout.setVerticalGroup(
+            panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelCameraLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblModel)
+                    .addComponent(txtModel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMegapixles)
+                    .addComponent(txtMegapixles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelCameraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblSensor)
+                    .addComponent(radCrop)
+                    .addComponent(radFull))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        panelLens.setMaximumSize(new java.awt.Dimension(197, 163));
+        panelLens.setMinimumSize(new java.awt.Dimension(197, 163));
+        panelLens.setName(""); // NOI18N
+
         jLabel1.setText("Focal Range:");
+
+        txtFocMin.setEnabled(false);
 
         jLabel2.setText("-");
 
+        txtFocMax.setEnabled(false);
+
+        txtFMax.setEnabled(false);
+
         jLabel3.setText("Aperture:");
+
+        txtFMin.setEnabled(false);
 
         jLabel4.setText("-");
 
         chkFull.setText("Full Frame Format");
+        chkFull.setEnabled(false);
 
         chkVR.setText("Vibration Reduction");
+        chkVR.setEnabled(false);
 
         chkMacro.setText("Macro");
+        chkMacro.setEnabled(false);
 
         chkAF.setText("Auto Focus");
+        chkAF.setEnabled(false);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblMake)
-                            .addComponent(lblModel)
-                            .addComponent(lblStock)
-                            .addComponent(lblPrice)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(cmdClear)))
-                .addGap(45, 45, 45)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(cmdAdd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 375, Short.MAX_VALUE)
-                        .addComponent(cmdClose))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtMake, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(txtModel))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtStock, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                    .addComponent(txtPrice))))
-                        .addGap(59, 59, 59)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout panelLensLayout = new javax.swing.GroupLayout(panelLens);
+        panelLens.setLayout(panelLensLayout);
+        panelLensLayout.setHorizontalGroup(
+            panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLensLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelLensLayout.createSequentialGroup()
+                        .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3)
-                            .addComponent(lblMegapixles)
-                            .addComponent(lblSensor)
                             .addComponent(jLabel1))
-                        .addGap(116, 116, 116)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtMegapixles)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(radCrop)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(radFull)))
-                                .addGap(52, 52, 52))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(txtFMin, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
-                                            .addComponent(txtFocMin))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(txtFocMax, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
-                                            .addComponent(txtFMax)))
-                                    .addComponent(chkFull, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(chkVR, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(chkMacro, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(chkAF, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(120, 120, 120)
-                .addComponent(radCamera)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(radLens)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtFocMin, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+                            .addComponent(txtFMin))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtFocMax, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+                            .addComponent(txtFMax)))
+                    .addGroup(panelLensLayout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(chkVR)
+                            .addComponent(chkMacro)
+                            .addComponent(chkAF)
+                            .addComponent(chkFull))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(radCamera)
-                    .addComponent(radLens))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblMake)
-                            .addComponent(txtMake, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblModel)
-                            .addComponent(txtModel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblMegapixles)
-                            .addComponent(txtMegapixles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblSensor)
-                            .addComponent(radCrop)
-                            .addComponent(radFull))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblStock)
-                    .addComponent(txtStock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        panelLensLayout.setVerticalGroup(
+            panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelLensLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtFocMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(txtFocMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblPrice)
-                    .addComponent(txtPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelLensLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(txtFMin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(txtFMax, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(chkFull)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(chkVR)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkMacro)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chkAF)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmdClear)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkFull)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(cmdClear)
+                            .addGap(113, 113, 113)
+                            .addComponent(cmdAdd)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmdClose))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(panelCamera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(panelLens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelLens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(panelCamera, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cmdAdd)
-                    .addComponent(cmdClose))
-                .addGap(20, 20, 20))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cmdClear)
+                        .addComponent(cmdClose)))
+                .addContainerGap())
         );
 
         pack();
@@ -399,17 +485,40 @@ public class AddProductGUI extends javax.swing.JDialog {
      * @param evt the event of the clear button being pressed.
      */
     private void cmdClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdClearActionPerformed
-        this.txtMake.setText(null);
-        this.txtModel.setText(null);
-        this.txtMegapixles.setText(null);
+        this.txtMake.setText("");
+        this.txtModel.setText("");
+        this.txtMegapixles.setText("");
         if (radCrop.isSelected()) {
             radCrop.setSelected(false);
         }
         if (radFull.isSelected()) {
             radFull.setSelected(false);
         }
-        this.txtStock.setText(null);
-        this.txtPrice.setText(null);
+        this.txtStock.setText("");
+        this.txtPrice.setText("");
+        this.txtFocMin.setText("");
+        this.txtFocMax.setText("");
+        this.txtFMin.setText("");
+        this.txtFMax.setText("");
+        this.chkVR.setSelected(false);
+        this.chkMacro.setSelected(false);
+        this.chkAF.setSelected(false);
+        this.chkFull.setSelected(false);
+        this.radCamera.setSelected(false);
+        this.radLens.setSelected(false);
+        this.txtModel.setEnabled(false);
+        this.txtMegapixles.setEnabled(false);
+        this.radCrop.setEnabled(false);
+        this.radFull.setEnabled(false);
+        this.txtFocMin.setEnabled(false);
+        this.txtFocMax.setEnabled(false);
+        this.txtFMin.setEnabled(false);
+        this.txtFMax.setEnabled(false);
+        this.chkVR.setEnabled(false);
+        this.chkMacro.setEnabled(false);
+        this.chkAF.setEnabled(false);
+        this.chkFull.setEnabled(false);
+        this.cmdAdd.setEnabled(false);
     }//GEN-LAST:event_cmdClearActionPerformed
 
     private void txtMakeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMakeActionPerformed
@@ -445,6 +554,7 @@ public class AddProductGUI extends javax.swing.JDialog {
         chkVR.setEnabled(false);
         chkMacro.setEnabled(false);
         chkAF.setEnabled(false);
+        cmdAdd.setEnabled(true);
     }//GEN-LAST:event_radCameraActionPerformed
 
     private void radLensActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radLensActionPerformed
@@ -460,6 +570,7 @@ public class AddProductGUI extends javax.swing.JDialog {
         chkVR.setEnabled(true);
         chkMacro.setEnabled(true);
         chkAF.setEnabled(true);
+        cmdAdd.setEnabled(true);
     }//GEN-LAST:event_radLensActionPerformed
 
     /**
@@ -489,6 +600,9 @@ public class AddProductGUI extends javax.swing.JDialog {
     private javax.swing.JLabel lblPrice;
     private javax.swing.JLabel lblSensor;
     private javax.swing.JLabel lblStock;
+    private javax.swing.JPanel panelCamera;
+    private javax.swing.JPanel panelLens;
+    private javax.swing.JPanel panelMain;
     private javax.swing.JRadioButton radCamera;
     private javax.swing.JRadioButton radCrop;
     private javax.swing.JRadioButton radFull;

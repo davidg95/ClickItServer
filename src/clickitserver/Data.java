@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 
 /**
  * Class which extends off ProductList. It adds methods for reading and writing
@@ -32,6 +33,9 @@ public class Data {
     private static int cameraCounter;
     private static int lensCounter;
 
+    private final Semaphore dataSem;
+    private final Semaphore clientsSem;
+
     private final File camerasFile;
     private final File lensesFile;
 
@@ -41,6 +45,9 @@ public class Data {
     public Data() {
         products = new ArrayList<>();
         clients = new ArrayList<>();
+
+        this.dataSem = new Semaphore(1);
+        this.clientsSem = new Semaphore(1);
 
         takings = 0;
 
@@ -56,7 +63,14 @@ public class Data {
      * @param s the socket the client is connected on.
      */
     public void addClient(Socket s) {
-        clients.add(s);
+        try {
+            clientsSem.acquire();
+            clients.add(s);
+        } catch (InterruptedException ex) {
+        } finally {
+            clientsSem.release();
+        }
+
     }
 
     /**
@@ -65,7 +79,13 @@ public class Data {
      * @param s the socket the client was connected from.
      */
     public void removeClient(Socket s) {
-        clients.remove(s);
+        try {
+            clientsSem.acquire();
+            clients.remove(s);
+        } catch (InterruptedException ex) {
+        } finally {
+            clientsSem.release();
+        }
     }
 
     /**
@@ -106,8 +126,15 @@ public class Data {
             t = "l";
         }
         p.setCode(getNewProductCode(t));
-        products.add(p);
-        saveToFile();
+
+        try {
+            dataSem.acquire();
+            products.add(p);
+            saveToFile();
+        } catch (InterruptedException ex) {
+        } finally {
+            dataSem.release();
+        }
     }
 
     /**
@@ -118,12 +145,18 @@ public class Data {
      * @throws ProductNotFoundException if the product could not be found.
      */
     public void purchaseProduct(String code) throws OutOfStockException, ProductNotFoundException {
-        for (Product p : products) {
-            if (p.getCode().equals(code)) {
-                p.purchase();
-                saveToFile();
-                return;
+        try {
+            dataSem.acquire();
+            for (Product p : products) {
+                if (p.getCode().equals(code)) {
+                    p.purchase();
+                    saveToFile();
+                    return;
+                }
             }
+        } catch (InterruptedException ex) {
+        } finally {
+            dataSem.release();
         }
         throw new ProductNotFoundException(code);
     }
@@ -136,10 +169,16 @@ public class Data {
      * @throws ProductNotFoundException if the product code was not found.
      */
     public Product getProduct(String code) throws ProductNotFoundException {
-        for (Product p : products) {
-            if (p.getCode().equals(code)) {
-                return p;
+        try {
+            dataSem.acquire();
+            for (Product p : products) {
+                if (p.getCode().equals(code)) {
+                    return p;
+                }
             }
+        } catch (InterruptedException ex) {
+        } finally {
+            dataSem.release();
         }
         throw new ProductNotFoundException(code);
     }
@@ -152,10 +191,16 @@ public class Data {
      * @throws ProductNotFoundException if the product code was not found.
      */
     public int getStock(String code) throws ProductNotFoundException {
-        for (Product p : products) {
-            if (p.getCode().equals(code)) {
-                return p.getStock();
+        try {
+            dataSem.acquire();
+            for (Product p : products) {
+                if (p.getCode().equals(code)) {
+                    return p.getStock();
+                }
             }
+        } catch (InterruptedException ex) {
+        } finally {
+            dataSem.release();
         }
         throw new ProductNotFoundException(code);
     }
@@ -168,10 +213,16 @@ public class Data {
      * @throws ProductNotFoundException if the product code was not found.
      */
     public void increaseStock(String code, int stock) throws ProductNotFoundException {
-        products.stream().filter((p) -> (p.getCode().equals(code))).forEach((p) -> {
-            p.increaseStock(stock);
-            saveToFile();
-        });
+        try {
+            dataSem.acquire();
+            products.stream().filter((p) -> (p.getCode().equals(code))).forEach((p) -> {
+                p.increaseStock(stock);
+                saveToFile();
+            });
+        } catch (InterruptedException ex) {
+        } finally {
+            dataSem.release();
+        }
         throw new ProductNotFoundException(code);
     }
 
@@ -182,14 +233,33 @@ public class Data {
      * @throws ProductNotFoundException if the product code was not found.
      */
     public void deleteProduct(String code) throws ProductNotFoundException {
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getCode().equals(code)) {
-                products.remove(i);
-                saveToFile();
-                return;
+        try {
+            dataSem.acquire();
+            for (int i = 0; i < products.size(); i++) {
+                if (products.get(i).getCode().equals(code)) {
+                    products.remove(i);
+                    saveToFile();
+                    return;
+                }
             }
+        } catch (InterruptedException ex) {
+        } finally {
+            dataSem.release();
         }
         throw new ProductNotFoundException(code);
+    }
+
+    /**
+     * Method to update a product with new values.
+     *
+     * @param newP the Product object with the updated values.
+     * @throws ProductNotFoundException if the product could not be found.
+     */
+    public void updateProduct(Product newP) throws ProductNotFoundException {
+        products.stream().filter((p) -> (p.getCode().equals(newP.getCode()))).map((p) -> newP).forEach((_item) -> {
+            saveToFile();
+        });
+        throw new ProductNotFoundException(newP.getCode());
     }
 
     /**

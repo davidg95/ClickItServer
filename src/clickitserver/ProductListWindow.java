@@ -5,11 +5,14 @@
  */
 package clickitserver;
 
+import io.github.davidg95.clickitapi.Camera;
+import io.github.davidg95.clickitapi.Lens;
 import io.github.davidg95.productapi.Product;
 import io.github.davidg95.productapi.ProductNotFoundException;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,6 +24,8 @@ public class ProductListWindow extends javax.swing.JFrame {
 
     private final Data data;
 
+    private final DefaultTableModel model;
+
     /**
      * Creates new form ProductListWindow
      *
@@ -29,6 +34,7 @@ public class ProductListWindow extends javax.swing.JFrame {
     public ProductListWindow(Data data) {
         this.data = data;
         initComponents();
+        model = (DefaultTableModel) tblProducts.getModel();
         updateList();
     }
 
@@ -37,7 +43,7 @@ public class ProductListWindow extends javax.swing.JFrame {
      */
     public final void updateList() {
 
-        lstProducts.removeAll();
+        model.setRowCount(0);
 
         List<Product> products = data.getAllProducts();
 
@@ -45,9 +51,11 @@ public class ProductListWindow extends javax.swing.JFrame {
 
         for (int i = 0; i <= (items.length - 1); i++) {
             items[i] = "<html><pre>" + products.get(i).getCode() + "\t\t" + products.get(i).getName() + ((products.get(i).getName()).length() < 17 ? "\t\t" : "\t") + products.get(i).getStock() + "\t" + products.get(i).getPrice() + "</pre></html>";
+            Object[] s = new Object[]{products.get(i).getCode(), products.get(i).getName(), products.get(i).getStock(), products.get(i).getPrice()};
+            model.addRow(s);
         }
 
-        lstProducts.setListData(items);
+        tblProducts.setModel(model);
     }
 
     /**
@@ -60,6 +68,26 @@ public class ProductListWindow extends javax.swing.JFrame {
         frame.setVisible(true);
     }
 
+    public void editProduct() {
+        int selectedRow = tblProducts.getSelectedRow();
+        if (selectedRow != -1) {
+            Product p = data.getAllProducts().get(selectedRow);
+            if (p instanceof Camera) {
+                p = EditCameraDialog.showEditCameraDialog((Camera) p);
+            } else if (p instanceof Lens) {
+                p = EditLensDialog.showEditLensDialog((Lens) p);
+            }
+            try {
+                data.updateProduct(p);
+            } catch (ProductNotFoundException ex) {
+
+            }
+            updateList();
+        } else {
+            JOptionPane.showMessageDialog(this, "Select a product", "Edit Product", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -69,21 +97,16 @@ public class ProductListWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lstProducts = new javax.swing.JList();
         btnAddProduct = new javax.swing.JButton();
         btnRemoveProduct = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblProducts = new javax.swing.JTable();
+        btnEditProduct = new javax.swing.JButton();
+        btnSearch = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Products");
-
-        lstProducts.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(lstProducts);
 
         btnAddProduct.setText("Add New Product");
         btnAddProduct.addActionListener(new java.awt.event.ActionListener() {
@@ -106,6 +129,50 @@ public class ProductListWindow extends javax.swing.JFrame {
             }
         });
 
+        tblProducts.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Product Code", "Name", "Stock", "Price"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblProducts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblProductsMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tblProducts);
+
+        btnEditProduct.setText("Edit Product");
+        btnEditProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditProductActionPerformed(evt);
+            }
+        });
+
+        btnSearch.setText("Search");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -113,12 +180,16 @@ public class ProductListWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 825, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAddProduct)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoveProduct)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 534, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEditProduct)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnClose)))
                 .addContainerGap())
         );
@@ -126,12 +197,14 @@ public class ProductListWindow extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddProduct)
                     .addComponent(btnRemoveProduct)
-                    .addComponent(btnClose))
+                    .addComponent(btnClose)
+                    .addComponent(btnEditProduct)
+                    .addComponent(btnSearch))
                 .addContainerGap())
         );
 
@@ -151,8 +224,8 @@ public class ProductListWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddProductActionPerformed
 
     private void btnRemoveProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveProductActionPerformed
-        if (lstProducts.getSelectedIndex() != -1) {
-            Product p = data.getAllProducts().get(lstProducts.getSelectedIndex());
+        if (tblProducts.getSelectedRow() != -1) {
+            Product p = data.getAllProducts().get(tblProducts.getSelectedRow());
             if (JOptionPane.showConfirmDialog(this, "Are you sure you want to remove product " + p.getCode() + "?", "Remove Product", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 try {
                     data.deleteProduct(p.getCode());
@@ -166,12 +239,34 @@ public class ProductListWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRemoveProductActionPerformed
 
+    private void btnEditProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditProductActionPerformed
+        editProduct();
+    }//GEN-LAST:event_btnEditProductActionPerformed
+
+    private void tblProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProductsMouseClicked
+        if (evt.getClickCount() == 2) {
+            editProduct();
+        }
+    }//GEN-LAST:event_tblProductsMouseClicked
+
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        DefaultTableModel searchModel = (DefaultTableModel) tblProducts.getModel();
+        String search = JOptionPane.showInputDialog(this, "Enter search terms", "Search", JOptionPane.PLAIN_MESSAGE);
+        searchModel.setRowCount(0);
+        data.getAllProducts().stream().filter((p) -> (p.getName().toLowerCase().contains(search.toLowerCase()))).map((p) -> new Object[]{p.getCode(), p.getName(), p.getStock(), p.getPrice()}).forEach((s) -> {
+            searchModel.addRow(s);
+        });
+        tblProducts.setModel(searchModel);
+    }//GEN-LAST:event_btnSearchActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddProduct;
     private javax.swing.JButton btnClose;
+    private javax.swing.JButton btnEditProduct;
     private javax.swing.JButton btnRemoveProduct;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList lstProducts;
+    private javax.swing.JButton btnSearch;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tblProducts;
     // End of variables declaration//GEN-END:variables
 }

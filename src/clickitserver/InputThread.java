@@ -159,6 +159,15 @@ public class InputThread extends Thread {
                         }
                         dataSem.release();
                         break;
+                    case "GETCOUNT": //Get product count
+                        try {
+                            dataSem.acquire();
+                            out.println(data.getAllProducts().size());
+                        } catch (InterruptedException ex) {
+
+                        }
+                        dataSem.release();
+                        break;
                     case "SENDDATA": //Get sales data.
                         try {
                             double takings = Double.parseDouble(inp[1]);

@@ -45,6 +45,7 @@ public class ServerGUI extends javax.swing.JFrame {
 
         lblClients = new javax.swing.JLabel();
         btnTakings = new javax.swing.JButton();
+        lblLog = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuExit = new javax.swing.JMenuItem();
@@ -106,7 +107,10 @@ public class ServerGUI extends javax.swing.JFrame {
                         .addComponent(lblClients))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(132, 132, 132)
-                        .addComponent(btnTakings)))
+                        .addComponent(btnTakings))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblLog, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(278, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -116,7 +120,9 @@ public class ServerGUI extends javax.swing.JFrame {
                 .addComponent(btnTakings)
                 .addGap(160, 160, 160)
                 .addComponent(lblClients)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addComponent(lblLog, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -142,6 +148,7 @@ public class ServerGUI extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JLabel lblClients;
+    private javax.swing.JLabel lblLog;
     private javax.swing.JMenuItem menuConnectedClients;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuProducts;
